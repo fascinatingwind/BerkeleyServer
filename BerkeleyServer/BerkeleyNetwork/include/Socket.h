@@ -6,29 +6,29 @@
 
 struct sockaddr_in;
 
-namespace Network
-{
-    enum class CONNECTION_TYPE
-    {
+namespace Network {
+    enum class CONNECTION_TYPE {
         TCP,
         UDP
     };
 
-    class Socket
-    {
+    class Socket {
     public:
-        Socket() = delete;
-        ~Socket();
-        explicit Socket(CONNECTION_TYPE type = CONNECTION_TYPE::TCP, size_t port = PortHelper::TCP_PORT);
+        Socket() = default;
+        virtual ~Socket();
 
         [[nodiscard]] bool IsValid() const;
+
         [[nodiscard]] int GetSocketDescriptor() const;
 
-    private:
-        sockaddr_in* m_sockaddr;
-        int m_socket;
+    protected:
+        sockaddr_in *m_sockaddr = nullptr;
+        int m_socket = -1;
         bool m_is_bind = false;
-        sockaddr_in* InitSockAddr(size_t port);
+
+        sockaddr_in *InitSockAddr(size_t port);
     };
+
+    using SocketPtr = std::shared_ptr<Socket>;
 }
 #endif //BERKELEYSERVER_SOCKET_H

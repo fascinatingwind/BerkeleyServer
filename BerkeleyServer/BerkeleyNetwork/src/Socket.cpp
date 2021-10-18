@@ -5,21 +5,6 @@
 #include <unistd.h>
 
 namespace Network {
-    Socket::Socket(CONNECTION_TYPE type, size_t port) {
-        m_socket = socket(PF_INET,
-                          type == CONNECTION_TYPE::TCP
-                          ? SOCK_STREAM
-                          : SOCK_DGRAM,
-                          type == CONNECTION_TYPE::TCP
-                          ? IPPROTO_TCP
-                          : IPPROTO_UDP);
-        m_sockaddr = InitSockAddr(port);
-        if (bind(m_socket, (struct sockaddr *) m_sockaddr, sizeof *m_sockaddr)) {
-            listen(m_socket, 10);
-            m_is_bind = true;
-        }
-    }
-
     Socket::~Socket() {
         delete m_sockaddr;
         close(m_socket);
