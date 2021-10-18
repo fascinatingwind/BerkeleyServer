@@ -1,7 +1,4 @@
-﻿// BerkeleyServer.cpp : Defines the entry point for the application.
-//
-
-#include "BerkeleyServer.h"
+﻿#include "BerkeleyNetwork.h"
 
 using namespace std;
 

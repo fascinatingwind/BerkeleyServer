@@ -1,12 +1,7 @@
-﻿// BerkeleyServer.cpp : Defines the entry point for the application.
-//
-
-#include "BerkeleyServer.h"
-
-using namespace std;
+﻿#include "BerkeleyServer.h"
 
 int main()
 {
-	cout << "Hello CMake." << endl;
+	std::cout << "Hello CMake." << std::endl;
 	return 0;
 }

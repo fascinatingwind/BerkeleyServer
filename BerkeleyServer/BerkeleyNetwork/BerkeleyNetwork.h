@@ -1,8 +1,8 @@
-﻿// BerkeleyServer.h : Include file for standard system include files,
-// or project specific include files.
-
-#pragma once
+﻿#pragma once
+#ifndef BERKELEY_NETWORK_H
+#define BERKELEY_NETWORK_H
 
 #include <iostream>
 
-// TODO: Reference additional headers your program requires here.
+#endif // !BERKELEY_NETWORK_H
+
