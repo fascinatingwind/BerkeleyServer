@@ -7,3 +7,5 @@ project ("BerkeleyServer")
 
 # Include sub-projects.
 add_subdirectory ("BerkeleyServer")
+add_subdirectory ("BerkeleyClient")
+add_subdirectory ("BerkeleyNetwork")
