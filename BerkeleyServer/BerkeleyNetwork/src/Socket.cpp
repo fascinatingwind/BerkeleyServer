@@ -14,7 +14,6 @@ namespace Network {
         auto sa = new sockaddr_in;
         sa->sin_family = AF_INET;
         sa->sin_port = htons(static_cast<uint16_t>(port));
-        sa->sin_addr.s_addr = htonl(INADDR_ANY);
         return sa;
     }
 

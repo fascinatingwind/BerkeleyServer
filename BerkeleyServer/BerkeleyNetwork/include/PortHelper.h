@@ -1,7 +1,3 @@
-//
-// Created by r1nk on 18.10.2021.
-//
-
 #ifndef BERKELEYSERVER_PORTHELPER_H
 #define BERKELEYSERVER_PORTHELPER_H
 namespace Network
