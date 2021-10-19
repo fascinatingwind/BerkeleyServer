@@ -4,21 +4,25 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <iostream>
 
 namespace Network {
-    TCPSocket::TCPSocket(size_t port, const std::string& address, bool is_listen)
-            : m_listen(is_listen) {
-        m_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-        m_sockaddr = InitSockAddr(port);
-        if (address.empty()) {
-            m_sockaddr->sin_addr.s_addr = htonl(INADDR_ANY);
-        } else {
-            inet_pton(AF_INET, address.c_str(), &m_sockaddr->sin_addr);
+    TCPSocket::TCPSocket(const std::string &port, const std::string &address) {
+        auto *info = InitAddrInfo();
+        addrinfo *servinfo;
+        info->ai_socktype = SOCK_STREAM;
+        if (auto rv = getaddrinfo(address.empty() ? nullptr : address.c_str(), port.c_str(), info, &servinfo); rv != 0) {
+            std::cerr << "getadrinfo :" << gai_strerror(rv) << std::endl;
         }
-        if (bind(m_socket, (struct sockaddr *) m_sockaddr, sizeof *m_sockaddr)) {
-            if (m_listen)
-                listen(m_socket, 10);
-            m_is_bind = true;
+
+        for(auto* p = servinfo; p != nullptr; p = p->ai_next)
+        {
+            if (m_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol); m_socket == -1) {
+                std::cerr << "Socket not created.";
+                continue;
+            }
+            m_sockaddr = p;
+            break;
         }
     }
 }

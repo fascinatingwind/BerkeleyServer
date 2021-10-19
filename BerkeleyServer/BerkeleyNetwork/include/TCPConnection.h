@@ -27,6 +27,8 @@ namespace Network {
 
     private:
         int m_connection_descriptor;
+
+        void LogIfError(const std::string& message) const;
     };
 }
 #endif //BERKELEYSERVER_TCPCONNECTION_H

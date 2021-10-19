@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+#include "Socket.h"
+
 namespace Network {
     class Connection {
     public:
@@ -19,8 +21,8 @@ namespace Network {
 
         virtual void WriteAsync() = 0;
 
-        virtual void Accept(int socket) = 0;
-        virtual void Connect(int socket) = 0;
+        virtual void Accept(SocketPtr socket) = 0;
+        virtual void Connect(SocketPtr socket) = 0;
 
         virtual std::string GetBuffer() = 0;
 

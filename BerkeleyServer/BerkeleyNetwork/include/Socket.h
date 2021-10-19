@@ -2,6 +2,7 @@
 #define BERKELEYSERVER_SOCKET_H
 
 #include <memory>
+#include <netdb.h>
 #include "PortHelper.h"
 
 struct sockaddr_in;
@@ -15,18 +16,26 @@ namespace Network {
     class Socket {
     public:
         Socket() = default;
+
         virtual ~Socket();
 
         [[nodiscard]] bool IsValid() const;
 
         [[nodiscard]] int GetSocketDescriptor() const;
 
-    protected:
-        sockaddr_in *m_sockaddr = nullptr;
-        int m_socket = -1;
-        bool m_is_bind = false;
+        [[nodiscard]] addrinfo *GetAddrInfo() const;
 
-        sockaddr_in *InitSockAddr(size_t port);
+        void SetSockOpt();
+
+        void Bind();
+
+        void Listen() const;
+
+    protected:
+        addrinfo *m_sockaddr = nullptr;
+        int m_socket = -1;
+
+        addrinfo *InitAddrInfo();
     };
 
     using SocketPtr = std::shared_ptr<Socket>;
