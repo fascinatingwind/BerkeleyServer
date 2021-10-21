@@ -11,6 +11,7 @@ namespace Network {
     {
     public:
        explicit UDPSocket(size_t port, const std::string& address = "");
+       void Bind() override{}
     };
 
     using UDPSocketPtr = std::shared_ptr<UDPSocket>;

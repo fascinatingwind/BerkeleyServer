@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <string>
-
+#include <vector>
 #include "Socket.h"
 
 namespace Network {
@@ -21,8 +21,9 @@ namespace Network {
 
         virtual void WriteAsync() = 0;
 
-        virtual void Accept(SocketPtr socket) = 0;
-        virtual void Connect(SocketPtr socket) = 0;
+        virtual void Accept(const Socket& socket) = 0;
+
+        virtual void Connect(const Socket& socket) = 0;
 
         virtual std::string GetBuffer() = 0;
 

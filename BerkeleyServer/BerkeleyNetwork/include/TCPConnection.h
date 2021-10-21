@@ -4,6 +4,8 @@
 #include "Connection.h"
 #include "TCPSocket.h"
 
+struct sockaddr_storage;
+
 namespace Network {
     class TCPConnection final : public Connection {
     public:
@@ -19,16 +21,18 @@ namespace Network {
 
         void WriteAsync() override;
 
-        void Accept(SocketPtr socket) override;
+        void Accept(const Socket& socket) override;
 
-        void Connect(SocketPtr socket) override;
+        void Connect(const Socket& socket) override;
 
         std::string GetBuffer() override;
 
     private:
-        int m_connection_descriptor;
+        int m_socket_descriptor;
+        struct sockaddr_storage m_remote_addr_storage;
 
-        void LogIfError(const std::string& message) const;
+        void SendBufferSize();
+        uint32_t ReceiveBufferSize();
     };
 }
 #endif //BERKELEYSERVER_TCPCONNECTION_H

@@ -17,25 +17,21 @@ namespace Network {
     public:
         Socket() = default;
 
-        virtual ~Socket();
+        virtual ~Socket() = default;
 
-        [[nodiscard]] bool IsValid() const;
+        virtual bool IsValid() const = 0;
 
-        [[nodiscard]] int GetSocketDescriptor() const;
+        virtual int GetSocketDescriptor() const = 0;
 
-        [[nodiscard]] addrinfo *GetAddrInfo() const;
+        virtual addrinfo *GetAddrInfo() const = 0;
 
-        void SetSockOpt();
+        virtual void SetSockOpt() = 0;
 
-        void Bind();
+        virtual void Bind() = 0;
 
-        void Listen() const;
+        virtual void Listen() const = 0;
 
-    protected:
-        addrinfo *m_sockaddr = nullptr;
-        int m_socket = -1;
-
-        addrinfo *InitAddrInfo();
+        virtual void CreateSocket() = 0;
     };
 
     using SocketPtr = std::shared_ptr<Socket>;
