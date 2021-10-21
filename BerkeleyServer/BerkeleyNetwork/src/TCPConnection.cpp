@@ -56,6 +56,8 @@ namespace Network {
         socklen_t storage_size = sizeof m_remote_addr_storage;
         m_socket_descriptor = accept(socket->GetSocketDescriptor(), (struct sockaddr *) &m_remote_addr_storage,
                                      &storage_size);
+
+        m_is_connected = m_socket_descriptor > 0;
         if (m_socket_descriptor < 0)
             std::cerr << "Accept error" << std::endl;
         is_need_close_socket = true;
@@ -72,6 +74,7 @@ namespace Network {
             return;
         m_socket_descriptor = socket->GetSocketDescriptor();
         const auto result = connect(m_socket_descriptor, sa->ai_addr, sa->ai_addrlen);
+        m_is_connected = result > -1;
         if (result < 0)
             std::cerr << "Error connect to host." << std::endl;
     }

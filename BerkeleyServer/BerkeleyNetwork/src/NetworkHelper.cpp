@@ -21,8 +21,8 @@ namespace Network
 
     SocketPtr NetworkHelper::MakeSocket(const std::string &type, const std::string& address, const std::string& port) {
         if (IsTCP(type))
-            return std::make_shared<Network::UDPSocket>(port, address);
-        else
             return std::make_shared<Network::TCPSocket>(port, address);
+        else
+            return std::make_shared<Network::UDPSocket>(port, address);
     }
 }

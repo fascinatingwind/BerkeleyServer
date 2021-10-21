@@ -29,10 +29,13 @@ namespace Network {
 
         virtual void SetBuffer(std::string message) { m_buffer = std::move(message); }
 
+        bool IsConnected() const { return m_is_connected; };
+
     protected:
         struct sockaddr_storage m_remote_addr_storage = {};
         std::string m_buffer;
         int m_socket_descriptor = -1;
+        bool m_is_connected = false;
     };
 
     using ConnectionPtr = std::shared_ptr<Connection>;
