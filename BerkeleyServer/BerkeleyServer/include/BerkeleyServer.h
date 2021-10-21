@@ -7,7 +7,7 @@ namespace
     inline bool run = true;
 }
 
-int main();
+int main(int argc, char* argv[]);
 
 #endif // !BERKELEY_SERVER_H
 
