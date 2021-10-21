@@ -44,14 +44,14 @@ namespace Network {
 
     }
 
-    void UDPConnection::Connect(const Socket &socket) {
-        m_socket_descriptor = socket.GetSocketDescriptor();
-        m_sockaddr = socket.GetAddrInfo();
+    void UDPConnection::Connect(SocketPtr socket) {
+        m_socket_descriptor = socket->GetSocketDescriptor();
+        m_sockaddr = socket->GetAddrInfo();
     }
 
-    void UDPConnection::Accept(const Socket &socket) {
-        m_socket_descriptor = socket.GetSocketDescriptor();
-        m_sockaddr = socket.GetAddrInfo();
+    void UDPConnection::Accept(SocketPtr socket) {
+        m_socket_descriptor = socket->GetSocketDescriptor();
+        m_sockaddr = socket->GetAddrInfo();
     }
 
     void UDPConnection::WriteAsync() {

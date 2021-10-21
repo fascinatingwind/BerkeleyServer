@@ -48,29 +48,29 @@ namespace Network {
             std::cerr << "Write result :" << result << std::endl;
     }
 
-    void TCPConnection::Accept(const Socket &socket) {
-        if (!socket.IsValid()) {
+    void TCPConnection::Accept(SocketPtr socket) {
+        if (!socket->IsValid()) {
             std::cerr << "Socket invalid. Accept failed" << std::endl;
             return;
         }
         socklen_t storage_size = sizeof m_remote_addr_storage;
-        m_socket_descriptor = accept(socket.GetSocketDescriptor(), (struct sockaddr *) &m_remote_addr_storage,
+        m_socket_descriptor = accept(socket->GetSocketDescriptor(), (struct sockaddr *) &m_remote_addr_storage,
                                      &storage_size);
         if (m_socket_descriptor < 0)
             std::cerr << "Accept error" << std::endl;
         is_need_close_socket = true;
     }
 
-    void TCPConnection::Connect(const Socket &socket) {
-        if (!socket.IsValid()) {
+    void TCPConnection::Connect(SocketPtr socket) {
+        if (!socket->IsValid()) {
             std::cerr << "Socket invalid. Connect failed" << std::endl;
             return;
         }
 
-        auto *sa = socket.GetAddrInfo();
+        auto *sa = socket->GetAddrInfo();
         if (!sa)
             return;
-        m_socket_descriptor = socket.GetSocketDescriptor();
+        m_socket_descriptor = socket->GetSocketDescriptor();
         const auto result = connect(m_socket_descriptor, sa->ai_addr, sa->ai_addrlen);
         if (result < 0)
             std::cerr << "Error connect to host." << std::endl;

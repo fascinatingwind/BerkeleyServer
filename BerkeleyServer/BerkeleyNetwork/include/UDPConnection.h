@@ -21,9 +21,9 @@ namespace Network {
 
         void WriteAsync() override;
 
-        void Accept(const Socket& socket) override;
+        void Accept(SocketPtr socket) override;
 
-        void Connect(const Socket& socket) override;
+        void Connect(SocketPtr socket) override;
 
         std::string GetBuffer() override;
 
