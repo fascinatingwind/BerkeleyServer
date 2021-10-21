@@ -17,7 +17,7 @@ namespace Network {
 
     TCPConnection::~TCPConnection() {
         if (m_socket_descriptor > 0)
-            close(m_socket_descriptor);
+            shutdown(m_socket_descriptor, SHUT_RDWR);
     }
 
     std::string TCPConnection::GetBuffer() {
@@ -60,14 +60,6 @@ namespace Network {
                                      &storage_size);
         if (m_socket_descriptor < 0)
             std::cerr << "Accept error" << std::endl;
-        size_t size = 32;
-        char buffer[size];
-        for (auto receive = recv(socket.GetSocketDescriptor(), &buffer, size, 0); receive > 0;
-             receive = recv(socket.GetSocketDescriptor(), &buffer, size, 0)) {
-            inet_ntop(m_remote_addr_storage.ss_family, get_in_addr((struct sockaddr *) &m_remote_addr_storage), buffer,
-                      size);
-            m_buffer.append(buffer);
-        }
     }
 
     void TCPConnection::Connect(const Socket &socket) {

@@ -10,8 +10,12 @@ namespace Network {
     class UDPSocket : public Socket
     {
     public:
-       explicit UDPSocket(size_t port, const std::string& address = "");
-       void Bind() override{}
+       explicit UDPSocket(const std::string& port, const std::string& address = "");
+
+        void SetSockOpt() override {};
+
+        void Listen() const override {};
+
     };
 
     using UDPSocketPtr = std::shared_ptr<UDPSocket>;

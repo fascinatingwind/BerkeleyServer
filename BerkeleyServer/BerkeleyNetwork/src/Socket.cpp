@@ -7,17 +7,9 @@
 #include <cstring>
 
 namespace Network {
-  /*  Socket::~Socket() {
+    Socket::~Socket() {
         freeaddrinfo(m_sockaddr);
         close(m_socket);
-    }
-*/
-    /*addrinfo Socket::InitAddrInfo() {
-        addrinfo sa = {};
-        memset(&sa, 0, sizeof sa);
-        sa.ai_family = AF_INET;
-        sa.ai_flags = AI_PASSIVE;
-        return sa;
     }
 
     bool Socket::IsValid() const {
@@ -30,9 +22,9 @@ namespace Network {
 
     addrinfo *Socket::GetAddrInfo() const {
         return m_sockaddr;
-    }*/
+    }
 
-  /*  void Socket::Bind() {
+    void Socket::Bind() {
         if (IsValid() && m_sockaddr != nullptr) {
             int result = bind(m_socket, m_sockaddr->ai_addr, m_sockaddr->ai_addrlen);
             if (result < 0)
@@ -45,8 +37,8 @@ namespace Network {
             listen(m_socket, 10);
         }
     }
-*/
- /*   void Socket::SetSockOpt() {
+
+   void Socket::SetSockOpt() {
         if (IsValid()) {
             int yes = 1;
 
@@ -54,5 +46,15 @@ namespace Network {
                 std::cerr << "Set sockopt error" << std::endl;
             }
         }
-    }*/
+    }
+
+    void Socket::CreateSocket() {
+        if (IsValid())
+            shutdown(m_socket, SHUT_RDWR);
+
+        m_socket = socket(m_sockaddr->ai_family, m_sockaddr->ai_socktype, m_sockaddr->ai_protocol);
+        if (!IsValid()) {
+            std::cerr << "Create socket error." << std::endl;
+        }
+    }
 }

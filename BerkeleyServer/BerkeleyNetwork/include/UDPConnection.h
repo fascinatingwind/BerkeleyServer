@@ -1,17 +1,17 @@
-#ifndef BERKELEYSERVER_TCPCONNECTION_H
-#define BERKELEYSERVER_TCPCONNECTION_H
+#ifndef BERKELEYSERVER_UDPCONNECTION_H
+#define BERKELEYSERVER_UDPCONNECTION_H
 
 #include "Connection.h"
-#include "TCPSocket.h"
+#include "UDPSocket.h"
 
 struct sockaddr_storage;
+struct sockaddr;
 
 namespace Network {
-    class TCPConnection final : public Connection {
+    class UDPConnection final : public Connection{
     public:
-        TCPConnection() = default;
-
-        ~TCPConnection() override;
+        UDPConnection() = default;
+        ~UDPConnection() override;
 
         void Read() override;
 
@@ -30,9 +30,8 @@ namespace Network {
     private:
         int m_socket_descriptor = -1;
         struct sockaddr_storage m_remote_addr_storage = {};
-
-        void SendBufferSize();
-        uint32_t ReceiveBufferSize();
+        addrinfo *m_sockaddr = nullptr;
     };
 }
-#endif //BERKELEYSERVER_TCPCONNECTION_H
+
+#endif //BERKELEYSERVER_UDPCONNECTION_H
