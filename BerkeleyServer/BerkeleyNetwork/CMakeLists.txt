@@ -10,7 +10,6 @@ link_directories(src)
 set(SOURCES
         "src/Socket.cpp"
         "include/Socket.h"
-        "include/PortHelper.h"
         "src/TCPSocket.cpp"
         "include/TCPSocket.h"
         "src/UDPSocket.cpp"

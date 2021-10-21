@@ -1,15 +1,12 @@
 #include "Socket.h"
 
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
 #include <iostream>
-#include <cstring>
 
 namespace Network {
     Socket::~Socket() {
         freeaddrinfo(m_sockaddr);
-        close(m_socket);
+        shutdown(m_socket, SHUT_RDWR);
     }
 
     bool Socket::IsValid() const {

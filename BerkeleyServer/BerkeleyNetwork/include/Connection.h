@@ -30,7 +30,9 @@ namespace Network {
         virtual void SetBuffer(std::string message) { m_buffer = std::move(message); }
 
     protected:
+        struct sockaddr_storage m_remote_addr_storage = {};
         std::string m_buffer;
+        int m_socket_descriptor = -1;
     };
 
     using ConnectionPtr = std::shared_ptr<Connection>;

@@ -5,6 +5,8 @@ namespace Network {
     UDPConnection::~UDPConnection() noexcept {
         if (m_socket_descriptor > 0)
             shutdown(m_socket_descriptor, SHUT_RDWR);
+
+        m_sockaddr = nullptr;
     }
 
     std::string UDPConnection::GetBuffer() {

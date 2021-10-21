@@ -28,8 +28,6 @@ namespace Network {
         std::string GetBuffer() override;
 
     private:
-        int m_socket_descriptor = -1;
-        struct sockaddr_storage m_remote_addr_storage = {};
         addrinfo *m_sockaddr = nullptr;
     };
 }

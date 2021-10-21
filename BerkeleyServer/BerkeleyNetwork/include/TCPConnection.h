@@ -28,9 +28,8 @@ namespace Network {
         std::string GetBuffer() override;
 
     private:
-        int m_socket_descriptor = -1;
-        struct sockaddr_storage m_remote_addr_storage = {};
-
+        // we create own socket discription only connect
+        bool is_need_close_socket = false;
         void SendBufferSize();
         uint32_t ReceiveBufferSize();
     };

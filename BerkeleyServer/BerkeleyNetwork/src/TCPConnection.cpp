@@ -2,10 +2,8 @@
 
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <unistd.h>
 #include <string>
 #include <iostream>
-#include <arpa/inet.h>
 
 namespace Network {
     void *get_in_addr(struct sockaddr *sa) {
@@ -16,7 +14,7 @@ namespace Network {
     }
 
     TCPConnection::~TCPConnection() {
-        if (m_socket_descriptor > 0)
+        if (is_need_close_socket)
             shutdown(m_socket_descriptor, SHUT_RDWR);
     }
 
@@ -60,6 +58,7 @@ namespace Network {
                                      &storage_size);
         if (m_socket_descriptor < 0)
             std::cerr << "Accept error" << std::endl;
+        is_need_close_socket = true;
     }
 
     void TCPConnection::Connect(const Socket &socket) {
