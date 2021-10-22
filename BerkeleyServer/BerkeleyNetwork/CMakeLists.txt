@@ -14,7 +14,17 @@ set(SOURCES
         "include/TCPSocket.h"
         "src/UDPSocket.cpp"
         "include/UDPSocket.h"
-        "include/Connection.h" include/TCPConnection.h src/TCPConnection.cpp src/UDPConnection.cpp include/UDPConnection.h src/NetworkHelper.cpp include/NetworkHelper.h)
+        "include/Connection.h"
+        "src/Connection.cpp"
+        "include/TCPConnection.h"
+        "src/TCPConnection.cpp"
+        "src/UDPConnection.cpp"
+        "include/UDPConnection.h"
+        "src/NetworkHelper.cpp"
+        "include/NetworkHelper.h"
+        "src/EventManager.cpp"
+        "include/EventManager.h"
+        )
 
 add_library(BerkeleyNetwork STATIC ${SOURCES})
 

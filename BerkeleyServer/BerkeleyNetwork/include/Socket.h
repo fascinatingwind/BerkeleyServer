@@ -2,9 +2,8 @@
 #define BERKELEYSERVER_SOCKET_H
 
 #include <memory>
-#include <netdb.h>
 
-struct sockaddr_in;
+struct addrinfo;
 
 namespace Network {
     class Socket {

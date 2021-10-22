@@ -4,6 +4,9 @@
 #include <memory>
 #include <string>
 #include <vector>
+//TODO remove include, use forward definition
+#include <sys/socket.h>
+
 #include "Socket.h"
 
 namespace Network {
@@ -27,15 +30,28 @@ namespace Network {
 
         virtual std::string GetBuffer() = 0;
 
-        virtual void SetBuffer(std::string message) { m_buffer = std::move(message); }
+        virtual void SetBuffer(std::string message);
 
-        bool IsConnected() const { return m_is_connected; };
+        bool IsConnected() const;
+
+        int GetConnectionDescriptor() const;
+
+        bool operator==(const Connection &other) const;
+
+        bool operator==(std::shared_ptr<Connection> other) const;
 
     protected:
         struct sockaddr_storage m_remote_addr_storage = {};
         std::string m_buffer;
         int m_socket_descriptor = -1;
+
+        // true if we create are socket connection.
+        // false if we got descriptor from socket and no need close it
         bool m_is_connected = false;
+
+        bool IsEqual(std::shared_ptr<Connection> connection) const;
+
+        bool IsEqual(const Connection &connection) const;
     };
 
     using ConnectionPtr = std::shared_ptr<Connection>;

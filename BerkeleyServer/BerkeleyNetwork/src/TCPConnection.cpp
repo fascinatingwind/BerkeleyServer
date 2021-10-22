@@ -4,15 +4,9 @@
 #include <netinet/in.h>
 #include <string>
 #include <iostream>
+#include <netdb.h>
 
 namespace Network {
-    void *get_in_addr(struct sockaddr *sa) {
-        if (sa->sa_family == AF_INET) {
-            return &(((struct sockaddr_in *) sa)->sin_addr);
-        }
-        return &(((struct sockaddr_in6 *) sa)->sin6_addr);
-    }
-
     TCPConnection::~TCPConnection() {
         if (is_need_close_socket)
             shutdown(m_socket_descriptor, SHUT_RDWR);

@@ -4,8 +4,6 @@
 #include "Connection.h"
 #include "TCPSocket.h"
 
-struct sockaddr_storage;
-
 namespace Network {
     class TCPConnection final : public Connection {
     public:
@@ -28,7 +26,7 @@ namespace Network {
         std::string GetBuffer() override;
 
     private:
-        // we create own socket discription only connect
+        // we create own socket discription only for connect
         bool is_need_close_socket = false;
         void SendBufferSize();
         uint32_t ReceiveBufferSize();

@@ -1,5 +1,7 @@
 #include "UDPConnection.h"
+
 #include <iostream>
+#include <netdb.h>
 
 namespace Network {
     UDPConnection::~UDPConnection() noexcept {

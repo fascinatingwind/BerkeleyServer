@@ -2,6 +2,7 @@
 
 #include <sys/socket.h>
 #include <iostream>
+#include <netdb.h>
 
 namespace Network {
     TCPSocket::TCPSocket(const std::string &port, const std::string &address) {
