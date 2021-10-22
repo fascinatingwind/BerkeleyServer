@@ -5,8 +5,8 @@
 
 namespace Network {
     UDPConnection::~UDPConnection() noexcept {
-        if (m_socket_descriptor > 0)
-            shutdown(m_socket_descriptor, SHUT_RDWR);
+        if (m_sock_fd > 0)
+            shutdown(m_sock_fd, SHUT_RDWR);
 
         m_sockaddr = nullptr;
     }
@@ -16,7 +16,7 @@ namespace Network {
     }
 
     void UDPConnection::Read() {
-        if (m_socket_descriptor < 0) {
+        if (m_sock_fd < 0) {
             return;
         }
 
@@ -24,7 +24,7 @@ namespace Network {
         m_buffer.clear();
         char buffer[buffer_size + 1];
         socklen_t addr_len = sizeof m_remote_addr_storage;
-        const auto bytes = recvfrom(m_socket_descriptor, buffer, buffer_size, 0,
+        const auto bytes = recvfrom(m_sock_fd, buffer, buffer_size, 0,
                                     (struct sockaddr *) &m_remote_addr_storage, &addr_len);
         if (bytes < 0) {
             std::cerr << "UDP connection read failed." << std::endl;
@@ -36,10 +36,10 @@ namespace Network {
     }
 
     void UDPConnection::Write() {
-        if (m_socket_descriptor < 0)
+        if (m_sock_fd < 0)
             return;
 
-        const auto bytes = sendto(m_socket_descriptor, m_buffer.c_str(), m_buffer.size(),
+        const auto bytes = sendto(m_sock_fd, m_buffer.c_str(), m_buffer.size(),
                                   0, m_sockaddr->ai_addr, m_sockaddr->ai_addrlen);
         if (bytes < 0)
             std::cerr << "UDP connection write failed" << std::endl;
@@ -47,12 +47,12 @@ namespace Network {
     }
 
     void UDPConnection::Connect(SocketPtr socket) {
-        m_socket_descriptor = socket->GetSocketDescriptor();
+        m_sock_fd = socket->GetSock();
         m_sockaddr = socket->GetAddrInfo();
     }
 
     void UDPConnection::Accept(SocketPtr socket) {
-        m_socket_descriptor = socket->GetSocketDescriptor();
+        m_sock_fd = socket->GetSock();
         m_sockaddr = socket->GetAddrInfo();
     }
 }

@@ -3,18 +3,18 @@
 
 #include <memory>
 
+#include "SockBase.h"
+
 struct addrinfo;
 
 namespace Network {
-    class Socket {
+    class Socket : public SockBase {
     public:
         Socket() = default;
 
         virtual ~Socket();
 
         virtual bool IsValid() const;
-
-        virtual int GetSocketDescriptor() const;
 
         virtual addrinfo *GetAddrInfo() const;
 
@@ -28,7 +28,6 @@ namespace Network {
 
     protected:
         addrinfo *m_sockaddr = nullptr;
-        int m_socket = -1;
     };
 
     using SocketPtr = std::shared_ptr<Socket>;

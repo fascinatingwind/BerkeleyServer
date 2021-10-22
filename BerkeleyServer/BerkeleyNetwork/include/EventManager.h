@@ -6,7 +6,7 @@
 // TODO try forward declaration to move it in cpp
 #include <sys/poll.h>
 
-#include "Connection.h"
+#include "SockBase.h"
 
 namespace Network {
     enum class CONNECTION_TYPE
@@ -21,17 +21,16 @@ namespace Network {
 
         ~EventManager() = default;
 
-        void AppendConnection(ConnectionPtr connection);
+        void AppendConnection(SockBasePtr sock_base);
 
-        std::map<CONNECTION_TYPE, ConnectionPtr> Poll();
+        std::map<CONNECTION_TYPE, SockBasePtr> Poll();
 
     protected:
         std::vector<pollfd> m_fds;
-        ConnectionPtr m_listener;
-        std::map<int, ConnectionPtr> m_connection_list;
+        std::map<int, SockBasePtr> m_connection_list;
 
-        void RemoveConnection(ConnectionPtr connection);
-        std::map<CONNECTION_TYPE, ConnectionPtr> GetActiveConnections();
+        void RemoveConnection(SockBasePtr connection);
+        std::map<CONNECTION_TYPE, SockBasePtr> GetActiveConnections();
     };
 }
 #endif //BERKELEYSERVER_EVENTMANAGER_H

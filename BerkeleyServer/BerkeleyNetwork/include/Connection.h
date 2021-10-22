@@ -8,9 +8,10 @@
 #include <sys/socket.h>
 
 #include "Socket.h"
+#include "SockBase.h"
 
 namespace Network {
-    class Connection {
+    class Connection : public SockBase{
     public:
         Connection() = default;
 
@@ -30,8 +31,6 @@ namespace Network {
 
         bool IsConnected() const;
 
-        int GetConnectionDescriptor() const;
-
         bool operator==(const Connection &other) const;
 
         bool operator==(std::shared_ptr<Connection> other) const;
@@ -39,7 +38,6 @@ namespace Network {
     protected:
         struct sockaddr_storage m_remote_addr_storage = {};
         std::string m_buffer;
-        int m_socket_descriptor = -1;
 
         // true if we create are socket connection.
         // false if we got descriptor from socket and no need close it

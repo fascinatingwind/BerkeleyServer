@@ -9,14 +9,10 @@ namespace Network {
         m_buffer = std::move(message);
     }
 
-    int Connection::GetConnectionDescriptor() const {
-        return m_socket_descriptor;
-    }
-
     bool Connection::IsEqual(const Connection &connection) const {
         // I may wrong. but we can mix up connection between new socket with main socket
         //
-        return m_is_connected == connection.IsConnected() && m_socket_descriptor == connection.GetConnectionDescriptor();
+        return m_is_connected == connection.IsConnected() && m_sock_fd == connection.GetSock();
     }
 
     bool Connection::IsEqual(std::shared_ptr<Connection> connection) const {

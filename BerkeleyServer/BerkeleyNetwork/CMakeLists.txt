@@ -24,7 +24,7 @@ set(SOURCES
         "include/NetworkHelper.h"
         "src/EventManager.cpp"
         "include/EventManager.h"
-        )
+        src/SockBase.cpp include/SockBase.h)
 
 add_library(BerkeleyNetwork STATIC ${SOURCES})
 

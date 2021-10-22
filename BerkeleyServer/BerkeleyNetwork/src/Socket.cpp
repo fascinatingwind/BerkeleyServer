@@ -7,15 +7,11 @@
 namespace Network {
     Socket::~Socket() {
         freeaddrinfo(m_sockaddr);
-        shutdown(m_socket, SHUT_RDWR);
+        shutdown(m_sock_fd, SHUT_RDWR);
     }
 
     bool Socket::IsValid() const {
-        return m_socket > 0;
-    }
-
-    int Socket::GetSocketDescriptor() const {
-        return m_socket;
+        return m_sock_fd > 0;
     }
 
     addrinfo *Socket::GetAddrInfo() const {
@@ -24,7 +20,7 @@ namespace Network {
 
     void Socket::Bind() {
         if (IsValid() && m_sockaddr != nullptr) {
-            int result = bind(m_socket, m_sockaddr->ai_addr, m_sockaddr->ai_addrlen);
+            int result = bind(m_sock_fd, m_sockaddr->ai_addr, m_sockaddr->ai_addrlen);
             if (result < 0)
                 std::cerr << "Socket bind error" << std::endl;
         }
@@ -32,7 +28,7 @@ namespace Network {
 
     void Socket::Listen() const {
         if (IsValid()) {
-            listen(m_socket, 10);
+            listen(m_sock_fd, 10);
         }
     }
 
@@ -40,7 +36,7 @@ namespace Network {
         if (IsValid()) {
             int yes = 1;
 
-            if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+            if (setsockopt(m_sock_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
                 std::cerr << "Set sockopt error" << std::endl;
             }
         }
@@ -48,9 +44,9 @@ namespace Network {
 
     void Socket::CreateSocket() {
         if (IsValid())
-            shutdown(m_socket, SHUT_RDWR);
+            shutdown(m_sock_fd, SHUT_RDWR);
 
-        m_socket = socket(m_sockaddr->ai_family, m_sockaddr->ai_socktype, m_sockaddr->ai_protocol);
+        m_sock_fd = socket(m_sockaddr->ai_family, m_sockaddr->ai_socktype, m_sockaddr->ai_protocol);
         if (!IsValid()) {
             std::cerr << "Create socket error." << std::endl;
         }
