@@ -20,10 +20,6 @@ namespace Network {
 
         virtual void Write() = 0;
 
-        virtual void ReadAsync() = 0;
-
-        virtual void WriteAsync() = 0;
-
         virtual void Accept(SocketPtr socket) = 0;
 
         virtual void Connect(SocketPtr socket) = 0;

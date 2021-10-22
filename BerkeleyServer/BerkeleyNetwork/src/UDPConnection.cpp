@@ -55,12 +55,4 @@ namespace Network {
         m_socket_descriptor = socket->GetSocketDescriptor();
         m_sockaddr = socket->GetAddrInfo();
     }
-
-    void UDPConnection::WriteAsync() {
-
-    }
-
-    void UDPConnection::ReadAsync() {
-
-    }
 }

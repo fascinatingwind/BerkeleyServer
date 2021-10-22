@@ -15,6 +15,8 @@ namespace Network {
 
         static SocketPtr MakeSocket(const std::string& type, const std::string& address, const std::string& port);
         static ConnectionPtr MakeConnection(const std::string& type);
+        static ConnectionPtr MakeConnection(SocketPtr socket);
+
     };
 }
 

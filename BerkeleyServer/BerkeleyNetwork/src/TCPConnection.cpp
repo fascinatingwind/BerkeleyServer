@@ -16,14 +16,6 @@ namespace Network {
         return m_buffer;
     }
 
-    void TCPConnection::ReadAsync() {
-
-    }
-
-    void TCPConnection::WriteAsync() {
-
-    }
-
     void TCPConnection::Read() {
         const auto buffer_size = ReceiveBufferSize();
         m_buffer.clear();

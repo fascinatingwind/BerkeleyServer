@@ -17,10 +17,6 @@ namespace Network {
 
         void Write() override;
 
-        void ReadAsync() override;
-
-        void WriteAsync() override;
-
         void Accept(SocketPtr socket) override;
 
         void Connect(SocketPtr socket) override;
