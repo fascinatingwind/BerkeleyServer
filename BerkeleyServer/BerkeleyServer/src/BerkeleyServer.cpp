@@ -75,8 +75,6 @@ namespace Server {
                     const auto&[connfd, conn] = *fit;
                     // connections for send/receive
                     auto future = std::async(&BerkeleyServer::SentResponse, this, conn);
-                    future.wait();
-                    RemoveConnection(conn);
                 }
             }
         }
@@ -88,6 +86,7 @@ namespace Server {
         ClientRequestParser parser;
         conn->SetBuffer(parser.GetResponse(conn->GetBuffer()));
         conn->Write();
+        RemoveConnection(conn);
     }
 
     void BerkeleyServer::RemoveConnection(ConnectionPtr conn) {
@@ -98,6 +97,6 @@ namespace Server {
 
     void BerkeleyServer::Print(ConnectionPtr conn) {
         std::lock_guard<std::mutex> lock(m_mutex);
-        std::cout << conn->GetBuffer() << std::endl;
+        std::cout << "Client sent message :" << conn->GetBuffer() << std::endl;
     }
 }
