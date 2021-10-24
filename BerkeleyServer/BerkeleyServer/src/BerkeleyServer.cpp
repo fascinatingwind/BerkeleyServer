@@ -74,7 +74,7 @@ namespace Server {
                 if (fit != m_connection_map.end()) {
                     const auto&[connfd, conn] = *fit;
                     // connections for send/receive
-                    auto future = std::async(&BerkeleyServer::SentResponse, this, conn);
+                    std::async(&BerkeleyServer::SentResponse, this, conn);
                 }
             }
         }
