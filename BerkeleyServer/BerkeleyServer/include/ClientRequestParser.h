@@ -1,0 +1,14 @@
+//
+// Created by r1nk on 24.10.2021.
+//
+
+#ifndef BERKELEYSERVER_CLIENTREQUESTPARSER_H
+#define BERKELEYSERVER_CLIENTREQUESTPARSER_H
+
+
+class ClientRequestParser {
+
+};
+
+
+#endif //BERKELEYSERVER_CLIENTREQUESTPARSER_H
