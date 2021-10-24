@@ -11,6 +11,8 @@ namespace Network {
 
         int GetSock() const;
 
+        bool operator==(const SockBase& other) const;
+        bool operator==(std::shared_ptr<SockBase> other) const;
     protected:
         int m_sock_fd = -1;
     };

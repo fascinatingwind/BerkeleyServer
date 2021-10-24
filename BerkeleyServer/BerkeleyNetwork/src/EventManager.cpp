@@ -4,11 +4,11 @@
 #include <iostream>
 
 namespace Network {
-    void EventManager::AppendConnection(SockBasePtr connection) {
+    void EventManager::AppendSockFD(SockBasePtr sock_base) {
         // add listener and connected
-        if (connection) {
-            const int con_desc = connection->GetSock();
-            m_connection_list.insert({con_desc, connection});
+        if (sock_base) {
+            const int con_desc = sock_base->GetSock();
+            m_connection_list.emplace(con_desc, sock_base);
 
             pollfd new_fd = {0};
             new_fd.fd = con_desc;
@@ -30,34 +30,39 @@ namespace Network {
         }
     }
 
-    std::map<CONNECTION_TYPE, SockBasePtr> EventManager::Poll() {
+    std::vector<SockBasePtr> EventManager::Poll() {
         int ret = poll(m_fds.data(), m_fds.size(), 10000);
         switch (ret) {
             case 0:
-                std::cerr << "Error Poll" << std::endl;
                 return {};
             case -1:
+                std::cerr << "Error Poll" << std::endl;
                 return {};
             default:
-                return GetActiveConnections();
+                return GetActiveSockFD();
         }
     }
 
-    std::map<CONNECTION_TYPE, SockBasePtr> EventManager::GetActiveConnections() {
-        std::map<CONNECTION_TYPE, SockBasePtr> result;
-        for (const auto &item: m_fds) {
+    std::vector<SockBasePtr> EventManager::GetActiveSockFD() {
+        std::vector<SockBasePtr> result;
+        for (auto &item: m_fds) {
             const auto it = m_connection_list.find(item.fd);
             // not neccessary
             if (it == m_connection_list.end())
                 continue;
 
             const auto&[fd, conn] = *it;
-            if (item.events & POLLIN) {
-                result.emplace(CONNECTION_TYPE::READ, conn);
+            if (item.revents & POLLIN) {
+                result.push_back(conn);
             }
-            if (item.events & POLLOUT) {
-                result.emplace(CONNECTION_TYPE::WRITE, conn);
-            }
+            // Need read man for this
+            /*if (item.revents & POLLOUT) {
+                result.emplace(IO_TYPE::WRITE, conn);
+            }*/
+
+            // POLLERR POLLHUP POLLNVAL missing
+            // reset incoming event
+            item.revents = 0;
         }
 
         return result;

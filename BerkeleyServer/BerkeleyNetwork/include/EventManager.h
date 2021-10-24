@@ -9,28 +9,21 @@
 #include "SockBase.h"
 
 namespace Network {
-    enum class CONNECTION_TYPE
-    {
-        READ,
-        WRITE
-    };
-
     class EventManager {
     public:
         EventManager() = default;
 
         ~EventManager() = default;
 
-        void AppendConnection(SockBasePtr sock_base);
+        void AppendSockFD(SockBasePtr sock_base);
 
-        std::map<CONNECTION_TYPE, SockBasePtr> Poll();
+        std::vector<SockBasePtr> Poll();
+        void RemoveConnection(SockBasePtr connection);
 
     protected:
         std::vector<pollfd> m_fds;
         std::map<int, SockBasePtr> m_connection_list;
-
-        void RemoveConnection(SockBasePtr connection);
-        std::map<CONNECTION_TYPE, SockBasePtr> GetActiveConnections();
+        std::vector<SockBasePtr> GetActiveSockFD();
     };
 }
 #endif //BERKELEYSERVER_EVENTMANAGER_H
