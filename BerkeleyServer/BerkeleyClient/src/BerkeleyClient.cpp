@@ -3,6 +3,7 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
+#include <unistd.h>
 
 #include "NetworkHelper.h"
 
@@ -35,8 +36,7 @@ int main(int argc, char *argv[]) {
         connection->SetBuffer(message);
         connection->Write();
         connection->Read();
-        const auto message = connection->GetBuffer();
-        std::cout << message << std::endl;
+        std::cout << "Receive message from server : " << connection->GetBuffer()<< std::endl;
     } else
         std::cerr << "Connect failed." << std::endl;
     return EXIT_SUCCESS;
