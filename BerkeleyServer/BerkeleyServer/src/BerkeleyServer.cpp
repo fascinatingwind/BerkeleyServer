@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <future>
 
 #include "NetworkHelper.h"
 #include "Socket.h"
@@ -73,16 +74,30 @@ namespace Server {
                 if (fit != m_connection_map.end()) {
                     const auto&[connfd, conn] = *fit;
                     // connections for send/receive
-                    // TODO Async
-                    conn->Read();
-                    std::cout << conn->GetBuffer() << std::endl;
-                    ClientRequestParser parser;
-                    conn->SetBuffer(parser.GetResponse(conn->GetBuffer()));
-                    conn->Write();
-                    m_connection_map.erase(conn);
-                    m_event_manager.RemoveConnection(conn);
+                    auto future = std::async(&BerkeleyServer::SentResponse, this, conn);
+                    future.wait();
+                    RemoveConnection(conn);
                 }
             }
         }
+    }
+
+    void BerkeleyServer::SentResponse(ConnectionPtr conn) {
+        conn->Read();
+        Print(conn);
+        ClientRequestParser parser;
+        conn->SetBuffer(parser.GetResponse(conn->GetBuffer()));
+        conn->Write();
+    }
+
+    void BerkeleyServer::RemoveConnection(ConnectionPtr conn) {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_connection_map.erase(conn);
+        m_event_manager.RemoveConnection(conn);
+    }
+
+    void BerkeleyServer::Print(ConnectionPtr conn) {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        std::cout << conn->GetBuffer() << std::endl;
     }
 }

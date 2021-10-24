@@ -13,3 +13,4 @@ set(SOURCES
 add_executable(BerkeleyServer ${SOURCES})
 
 target_link_libraries(BerkeleyServer BerkeleyNetwork)
+target_link_libraries(BerkeleyServer pthread)
