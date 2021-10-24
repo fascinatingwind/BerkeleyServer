@@ -1,66 +1,81 @@
 #include "BerkeleyServer.h"
 
-#include <cstdlib>
-#include <sys/wait.h>
 #include <iostream>
-#include <cstring>
+#include <algorithm>
+#include <vector>
 
 #include "NetworkHelper.h"
+#include "Socket.h"
 
-using namespace Network;
-
-std::string GetString(char *argv) {
-    return {argv, strlen(argv)};
-}
-
-void sigchild_handler(int s) {
-    while (waitpid(-1, nullptr, WNOHANG) > 0);
-}
-
-int main(int argc, char* argv[]) {
-    if(argc < 2)
-    {
-        std::cerr << "Please enter port for listening" << std::endl;
-        return EXIT_SUCCESS;
-    }
-
-    signal(SIGINT, [](int) { run = false; });
-
-    struct sigaction sa = {};
-    sa.sa_handler = sigchild_handler;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_RESTART;
-    if (sigaction(SIGCHLD, &sa, nullptr) == -1) {
-        std::cerr << "Sigaction error." << std::endl;
-        run = false;
-    }
-    const auto port = GetString(argv[1]);
-    auto tcp_socket = NetworkHelper::MakeSocket("tcp", "", port);
-    auto udp_socket = NetworkHelper::MakeSocket("udp", "", port);
-
-    for(const auto& socket : {tcp_socket, udp_socket}) {
-        socket->CreateSocket();
-        socket->SetSockOpt();
-        socket->Bind();
-        socket->Listen();
-    }
-
-    while (run) {
-        run = tcp_socket->IsValid();
-        auto connection = NetworkHelper::MakeConnection("tcp");
-        connection->Accept(tcp_socket);
-        if(connection->IsConnected()) {
-            connection->Read();
-            std::cout << connection->GetBuffer() << std::endl;
-            connection->SetBuffer("Hello world!");
-            connection->Write();
-            std::cout << connection->GetBuffer() << std::endl;
-        }
-        else
+namespace Server {
+    std::vector<SocketPtr> BerkeleyServer::InitListenSockets() {
+        std::vector<SocketPtr> listeners;
+        if(m_listening_port.empty())
         {
-            std::cerr << "Connection problem." << std::endl;
+            std::cerr << "Please setup port." << std::endl;
+            return listeners;
         }
+
+        listeners.push_back(NetworkHelper::MakeSocket("tcp", "", m_listening_port));
+        listeners.push_back(NetworkHelper::MakeSocket("udp", "", m_listening_port));
+
+        for (const auto &socket: listeners) {
+            socket->CreateSocket();
+            socket->SetSockOpt();
+            socket->Bind();
+            socket->Listen();
+        }
+        return listeners;
     }
 
-    return EXIT_SUCCESS;
+    void BerkeleyServer::SetPort(const std::string &port) {
+        m_listening_port = port;
+    }
+
+    void BerkeleyServer::Run() {
+        if(m_listening_port.empty())
+        {
+            std::cerr << "Please setup port." << std::endl;
+            return;
+        }
+        const auto listeners = InitListenSockets();
+
+        for (const auto &sock: listeners)
+            m_event_manager.AppendSockFD(sock);
+
+        while (m_run) {
+            // check listeners
+            const auto it = std::find_if(listeners.begin(), listeners.end(),
+                                         [](SocketPtr socket) { return !socket->IsValid(); });
+            m_run = it == listeners.end();
+
+            // return all sockets what have events
+            const auto socks = m_event_manager.Poll();
+            for (const auto &sockfd: socks) {
+                // new connections from listeners
+                for (const auto &socket: listeners) {
+                    if (sockfd == socket) {
+                        auto conn = NetworkHelper::MakeConnection(socket);
+                        conn->Accept(socket);
+                        m_event_manager.AppendSockFD(conn);
+                        m_connection_map.emplace(conn, conn);
+                    }
+                }
+
+                // io with clients
+                const auto fit = m_connection_map.find(sockfd);
+                if (fit != m_connection_map.end()) {
+                    const auto&[connfd, conn] = *fit;
+                    // connections for send/receive
+                    // TODO Async
+                    conn->Read();
+                    std::cout << conn->GetBuffer() << std::endl;
+                    conn->SetBuffer("Hello World");
+                    conn->Write();
+                    m_connection_map.erase(conn);
+                    m_event_manager.RemoveConnection(conn);
+                }
+            }
+        }
+    }
 }
