@@ -25,7 +25,9 @@ namespace Server {
         std::map<SockBasePtr, ConnectionPtr> m_connection_map;
 
     private:
-        std::vector<SocketPtr> InitListenSockets();
+        std::vector<SocketPtr> m_listeners;
+        void InitListenSockets();
+        void AcceptNewConnections(const std::vector<SockBasePtr>& incoming);
     };
 }
 

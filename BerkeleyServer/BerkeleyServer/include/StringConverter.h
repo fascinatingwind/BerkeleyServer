@@ -2,6 +2,7 @@
 #define BERKELEYSERVER_STRINGCONVERTER_H
 
 #include <string>
+#include <vector>
 
 namespace Server {
     class StringConverter {
@@ -9,7 +10,10 @@ namespace Server {
         StringConverter() = delete;
         ~StringConverter() = delete;
 
-        static int GetInt(const std::string& str);
+        // Can make template for other types
+        static std::vector<int> GetAllInt(const std::string& str);
+
+        static std::string GetString(const std::vector<int>& digits);
     };
 }
 

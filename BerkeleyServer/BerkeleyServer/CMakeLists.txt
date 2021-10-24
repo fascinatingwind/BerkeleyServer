@@ -8,7 +8,7 @@ link_directories(src)
 set(SOURCES
         "src/BerkeleyServer.cpp"
         "include/BerkeleyServer.h"
-        src/main.cpp)
+        src/main.cpp src/ClientRequestParser.cpp include/ClientRequestParser.h src/StringConverter.cpp include/StringConverter.h src/StringSplitter.cpp include/StringSplitter.h)
 
 add_executable(BerkeleyServer ${SOURCES})
 
