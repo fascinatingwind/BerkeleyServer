@@ -25,7 +25,7 @@ namespace Server {
         std::mutex m_mutex;
         std::string m_listening_port;
         EventManager m_event_manager;
-        std::map<SockBasePtr, ConnectionPtr> m_connection_map;
+        std::map<int, ConnectionPtr> m_connection_map;
         bool m_run = true;
 
     private:

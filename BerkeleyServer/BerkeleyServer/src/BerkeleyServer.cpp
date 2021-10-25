@@ -11,8 +11,7 @@
 
 namespace Server {
     void BerkeleyServer::InitListenSockets() {
-        if(m_listening_port.empty())
-        {
+        if (m_listening_port.empty()) {
             std::cerr << "Please setup port." << std::endl;
             return;
         }
@@ -34,7 +33,7 @@ namespace Server {
         m_run = it == m_listeners.end();
     }
 
-    void BerkeleyServer::AcceptNewConnections(const std::vector<SockBasePtr>& incoming) {
+    void BerkeleyServer::AcceptNewConnections(const std::vector<SockBasePtr> &incoming) {
         for (const auto &sockfd: incoming) {
             // new connections from listeners
             for (const auto &socket: m_listeners) {
@@ -42,7 +41,7 @@ namespace Server {
                     auto conn = NetworkHelper::MakeConnection(socket);
                     conn->Accept(socket);
                     m_event_manager.AppendSockFD(conn);
-                    m_connection_map.emplace(conn, conn);
+                    m_connection_map.emplace(conn->GetSock(), conn);
                 }
             }
         }
@@ -53,8 +52,7 @@ namespace Server {
     }
 
     void BerkeleyServer::Run() {
-        if(m_listening_port.empty())
-        {
+        if (m_listening_port.empty()) {
             std::cerr << "Please setup port." << std::endl;
             return;
         }
@@ -70,7 +68,7 @@ namespace Server {
 
             for (const auto &sockfd: socks) {
                 // io with clients
-                const auto fit = m_connection_map.find(sockfd);
+                const auto fit = m_connection_map.find(sockfd->GetSock());
                 if (fit != m_connection_map.end()) {
                     const auto&[connfd, conn] = *fit;
                     // connections for send/receive
@@ -81,22 +79,35 @@ namespace Server {
     }
 
     void BerkeleyServer::SentResponse(ConnectionPtr conn) {
-        conn->Read();
-        Print(conn);
-        ClientRequestParser parser;
-        conn->SetBuffer(parser.GetResponse(conn->GetBuffer()));
-        conn->Write();
-        RemoveConnection(conn);
+        if (conn) {
+            conn->Read();
+            // bottleneck
+            //Print(conn);
+            ClientRequestParser parser;
+            conn->SetBuffer(parser.GetResponse(conn->GetBuffer()));
+            conn->Write();
+            RemoveConnection(conn);
+        }
     }
 
     void BerkeleyServer::RemoveConnection(ConnectionPtr conn) {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        m_connection_map.erase(conn);
-        m_event_manager.RemoveConnection(conn);
+        if (conn) {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            const int sockfd = conn->GetSock();
+            // make sure what we dont delete udp socket
+            const auto fit = std::find_if(m_listeners.begin(), m_listeners.end(),
+                                          [sockfd](SocketPtr sock) { return sock->GetSock() == sockfd; });
+            if (fit == m_listeners.end()) {
+                m_connection_map.erase(sockfd);
+                m_event_manager.RemoveConnection(conn);
+            }
+        }
     }
 
     void BerkeleyServer::Print(ConnectionPtr conn) {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        std::cout << "Client sent message :" << conn->GetBuffer() << std::endl;
+        if (conn) {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            std::cout << "Client sent message :" << conn->GetBuffer() << std::endl;
+        }
     }
 }
