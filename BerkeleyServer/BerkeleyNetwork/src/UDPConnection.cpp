@@ -5,9 +5,6 @@
 
 namespace Network {
     UDPConnection::~UDPConnection() noexcept {
-        if (m_sock_fd > 0)
-            shutdown(m_sock_fd, SHUT_RDWR);
-
         m_sockaddr = nullptr;
     }
 
@@ -23,9 +20,7 @@ namespace Network {
         const size_t buffer_size = 1024;
         m_buffer.clear();
         char buffer[buffer_size + 1];
-        socklen_t addr_len = sizeof m_remote_addr_storage;
-        const auto bytes = recvfrom(m_sock_fd, buffer, buffer_size, 0,
-                                    (struct sockaddr *) &m_remote_addr_storage, &addr_len);
+        const auto bytes = recvfrom(m_sock_fd, buffer, buffer_size, 0, m_sockaddr->ai_addr, & m_sockaddr->ai_addrlen);
         if (bytes < 0) {
             std::cerr << "UDP connection read failed." << std::endl;
             return;
@@ -49,10 +44,10 @@ namespace Network {
     void UDPConnection::Connect(SocketPtr socket) {
         m_sock_fd = socket->GetSock();
         m_sockaddr = socket->GetAddrInfo();
+        m_is_connected = m_sock_fd > 0;
     }
 
     void UDPConnection::Accept(SocketPtr socket) {
-        m_sock_fd = socket->GetSock();
-        m_sockaddr = socket->GetAddrInfo();
+        Connect(socket);
     }
 }

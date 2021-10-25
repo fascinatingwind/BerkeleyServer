@@ -8,12 +8,14 @@ namespace Network {
         // add listener and connected
         if (sock_base) {
             const int con_desc = sock_base->GetSock();
-            m_connection_list.emplace(con_desc, sock_base);
-
-            pollfd new_fd = {0};
-            new_fd.fd = con_desc;
-            new_fd.events = POLLIN;
-            m_fds.push_back(new_fd);
+            const auto fit = m_connection_list.find(con_desc);
+            if(fit == m_connection_list.end()) {
+                m_connection_list.emplace(con_desc, sock_base);
+                pollfd new_fd = {0};
+                new_fd.fd = con_desc;
+                new_fd.events = POLLIN;
+                m_fds.push_back(new_fd);
+            }
         }
     }
 
