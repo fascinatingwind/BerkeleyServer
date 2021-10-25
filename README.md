@@ -33,6 +33,8 @@ For Connections need add test for Write method. I suppose here a problem when BS
 
 ## Remarks
 add parse string like "23asdasd545fdghdfgh423535" take all numbers and return result
+
 Remove BerkeleyClient.h - useless
+
 change protected to private in BerkeleyServer.h
 
