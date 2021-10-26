@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <netdb.h>
+#include <errno.h>
 
 namespace Network {
     TCPConnection::~TCPConnection() {
@@ -21,17 +22,25 @@ namespace Network {
         m_buffer.clear();
         char buffer[buffer_size + 1];
         auto receive = recv(m_sock_fd, &buffer, buffer_size, MSG_NOSIGNAL);
+
         if (receive > 0) {
             buffer[receive] = '\0';
             m_buffer.append(buffer);
+        } else if (errno != EWOULDBLOCK) {
+            std::cerr << "read error" << std::endl;
         }
     }
 
     void TCPConnection::Write() {
         SendBufferSize();
         auto result = send(m_sock_fd, m_buffer.c_str(), m_buffer.size(), MSG_NOSIGNAL);
-        if (result < 0)
-            std::cerr << "Write result :" << result << std::endl;
+
+        if (result < 0){
+                std::cerr << "Write result :" << result << std::endl;
+                if (errno != EWOULDBLOCK) {
+                    std::cerr << "write error" << std::endl;
+            }
+        }
     }
 
     void TCPConnection::Accept(SocketPtr socket) {
