@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <netdb.h>
+#include <errno.h>
 
 namespace Network {
     UDPConnection::~UDPConnection() noexcept {
@@ -22,6 +23,10 @@ namespace Network {
         char buffer[buffer_size + 1];
         const auto bytes = recvfrom(m_sock_fd, buffer, buffer_size, 0, m_sockaddr->ai_addr, & m_sockaddr->ai_addrlen);
         if (bytes < 0) {
+            if(errno != EWOULDBLOCK)
+            {
+                std::cerr << "Read failed." << std::endl;
+            }
             std::cerr << "UDP connection read failed." << std::endl;
             return;
         }
@@ -36,8 +41,13 @@ namespace Network {
 
         const auto bytes = sendto(m_sock_fd, m_buffer.c_str(), m_buffer.size(),
                                   0, m_sockaddr->ai_addr, m_sockaddr->ai_addrlen);
-        if (bytes < 0)
+        if (bytes < 0){
+            if(errno != EWOULDBLOCK)
+            {
+                std::cerr << "Write failed." << std::endl;
+            }
             std::cerr << "UDP connection write failed" << std::endl;
+        }
 
     }
 
