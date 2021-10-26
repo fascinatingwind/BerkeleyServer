@@ -47,6 +47,7 @@ namespace Network {
             shutdown(m_sock_fd, SHUT_RDWR);
 
         m_sock_fd = socket(m_sockaddr->ai_family, m_sockaddr->ai_socktype, m_sockaddr->ai_protocol);
+        fcntl(m_sock_fd, F_SETFL, O_NONBLOCK); 
         if (!IsValid()) {
             std::cerr << "Create socket error." << std::endl;
         }
