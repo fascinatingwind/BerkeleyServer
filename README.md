@@ -6,7 +6,7 @@ For this case I'm using poll (not epoll)
 
 Better practice use libevent.
 
-
+for linux only
 
 ## run Server 
 Enter port in comand line
